@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HackingSum</title>
+  <style>
+    :root{
+      --bg:#07131a;
+      --bg2:#0c1b22;
+      --card:#10232c;
+      --text:#ecf8f6;
+      --muted:#9ec7c0;
+      --primary:#14b8a6;
+      --accent:#22d3ee;
+      --border:#1f3b44;
+      --glow:0 0 30px rgba(20,184,166,.35);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:radial-gradient(1200px 600px at 10% -10%, rgba(20,184,166,.20), transparent 60%), radial-gradient(900px 500px at 90% 0%, rgba(34,211,238,.14), transparent 60%), var(--bg);line-height:1.6;overflow-x:hidden}
+    a{text-decoration:none;color:inherit}
+    .container{max-width:1140px;margin:0 auto;padding:0 20px}
+
+    /* animated cyber grid */
+    body::before{
+      content:"";
+      position:fixed;inset:0;pointer-events:none;z-index:-1;
+      background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at 50% 20%, black 30%, transparent 80%);
+      animation:gridMove 18s linear infinite;
+    }
+    @keyframes gridMove{from{transform:translateY(0)}to{transform:translateY(40px)}}
+
+    header{position:sticky;top:0;z-index:100;background:rgba(6,11,22,.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+    .nav{height:74px;display:flex;align-items:center;justify-content:space-between}
+    .brand{font-weight:800;letter-spacing:.4px}
+    .menu{display:flex;align-items:center;gap:18px}
+    .menu a{font-size:14px;color:var(--muted)}
+    .menu a:hover{color:var(--text)}
+
+    .btn{display:inline-block;padding:12px 18px;border-radius:14px;font-weight:700;border:1px solid transparent;transition:.25s ease}
+    .btn.primary{background:linear-gradient(90deg,#0d9488,#14b8a6);box-shadow:var(--glow);color:white}
+    .btn.primary:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(20,184,166,.6)}
+    .btn.ghost{border-color:var(--border);color:var(--text);background:rgba(255,255,255,.02)}
+    .btn.ghost:hover{border-color:#3b82f6}
+
+    .hero{padding:86px 0 58px;border-bottom:1px solid var(--border)}
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center}
+    h1{font-size:48px;line-height:1.1;margin:0 0 14px;opacity:0;transform:translateY(16px);animation:fadeUp .8s ease forwards}
+    .lead{font-size:18px;color:var(--muted);max-width:60ch;opacity:0;transform:translateY(16px);animation:fadeUp .8s .15s ease forwards}
+    .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;opacity:0;transform:translateY(16px);animation:fadeUp .8s .3s ease forwards}
+    @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+
+    .dash{position:relative;background:linear-gradient(135deg,#0c2028,#12323b);border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+    .dash::after{content:"";position:absolute;inset:-1px;border-radius:18px;background:linear-gradient(120deg, rgba(20,184,166,.5), transparent 40%, rgba(34,211,238,.4));filter:blur(16px);z-index:-1}
+    .bar{height:10px;background:#1f3b44;border-radius:999px;margin-bottom:10px;position:relative;overflow:hidden}
+    .bar::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(20,184,166,.55),transparent);animation:sweep 3s linear infinite}
+    @keyframes sweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .card{height:110px;border:1px solid #2a4f57;border-radius:12px;background:radial-gradient(circle at 20% 10%, rgba(20,184,166,.25), transparent 50%), #0b1630;animation:pulse 2.2s ease-in-out infinite alternate}
+    @keyframes pulse{from{box-shadow:inset 0 0 0 rgba(59,130,246,.0)}to{box-shadow:inset 0 0 30px rgba(20,184,166,.12)}}
+
+    .trust{padding:16px 0;border-bottom:1px solid var(--border);color:var(--muted);font-size:14px}
+    .logos{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .pill{padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:#0d242b;color:#d7e7ff;font-size:12px}
+
+    section{padding:60px 0;border-bottom:1px solid var(--border)}
+    h2{font-size:32px;margin:0 0 10px}
+    .sub{color:var(--muted);max-width:75ch}
+
+    .reveal{opacity:0;transform:translateY(18px);transition:.6s ease}
+    .reveal.show{opacity:1;transform:translateY(0)}
+
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px}
+
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+    .service{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;transition:.25s ease}
+    .service:hover{transform:translateY(-6px);box-shadow:0 12px 28px rgba(0,0,0,.35);border-color:#2f4f8f}
+    .service h3{margin:0 0 6px;font-size:18px}
+    .service p{margin:0;color:var(--muted);font-size:14px}
+
+    .checks{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+    .check{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
+
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+    .stat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center}
+    .num{font-size:30px;font-weight:800;color:#dff0ff}
+    .label{color:var(--muted);font-size:14px}
+
+    .process{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+    .step{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+
+    .testi,.pricing{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+    .quote,.price{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+
+    .cta{padding:72px 0;text-align:center;background:linear-gradient(180deg,rgba(59,130,246,.10),rgba(16,185,129,.08))}
+    .cta p{color:var(--muted);max-width:70ch;margin:10px auto 18px}
+
+    footer{padding:28px 0;color:var(--muted)}
+    .footer{display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* floating CTA */
+    .floating{position:fixed;right:16px;bottom:16px;z-index:120}
+    .floating .btn{animation:breath 2s ease-in-out infinite}
+    @keyframes breath{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+
+    @media (max-width:900px){
+      .hero-grid,.two,.grid-3,.checks,.stats,.process,.testi,.pricing,.footer{grid-template-columns:1fr}
+      h1{font-size:36px}
+      .menu a.hide-sm{display:none}
+    }
+  
+    /* ULTRA PRO additions */
+    .matrix{position:fixed;inset:0;pointer-events:none;z-index:-2;opacity:.18}
+    .matrix canvas{width:100%;height:100%;display:block}
+
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:rgba(20,184,166,.10);color:#cfe2ff;font-size:12px;margin-bottom:14px}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px rgba(16,185,129,.8);animation:blink 1.2s infinite}
+    @keyframes blink{50%{opacity:.4}}
+
+    .hero{position:relative;overflow:hidden}
+    .hero::after{content:"";position:absolute;inset:-20% -10% auto -10%;height:220px;background:radial-gradient(circle at 50% 0%, rgba(20,184,166,.25), transparent 70%);pointer-events:none}
+
+    .parallax{transform:translateY(0);transition:transform .12s linear}
+
+    .threat-map{margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;position:relative;overflow:hidden}
+    .threat-map .line{height:2px;background:linear-gradient(90deg,transparent,rgba(20,184,166,.85),transparent);position:absolute;left:-30%;right:-30%;animation:scan 3.5s linear infinite}
+    .threat-map .line:nth-child(2){top:40%;animation-delay:1.2s}
+    .threat-map .line:nth-child(3){top:70%;animation-delay:2.1s}
+    .threat-map .line:nth-child(1){top:15%}
+    @keyframes scan{from{transform:translateX(-30%)}to{transform:translateX(30%)}}
+    .threat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+    .threat-cell{height:54px;border:1px solid #2a4f57;border-radius:10px;background:rgba(20,184,166,.10);position:relative;overflow:hidden}
+    .threat-cell::after{content:"";position:absolute;inset:-20%;background:radial-gradient(circle, rgba(34,211,238,.35), transparent 60%);animation:ping 2.2s ease-in-out infinite}
+    @keyframes ping{0%{transform:scale(.6);opacity:.6}100%{transform:scale(1.2);opacity:0}}
+
+    .lead-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    .lead-form input,.lead-form textarea{width:100%;background:#081126;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;font:inherit}
+    .lead-form textarea{grid-column:1/-1;min-height:90px;resize:vertical}
+
+    .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#0c1a34;border:1px solid var(--border);padding:10px 14px;border-radius:10px;color:#dbe8ff;opacity:0;pointer-events:none;transition:.25s;z-index:200}
+    .toast.show{opacity:1}
+
+    @media (max-width:900px){
+      .lead-form{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <div class="brand">HackingSum</div>
+    <div class="small" style="margin-top:2px;color:var(--muted);font-size:12px;">Threats Never Sleep. Neither Do We.</div>
+    <nav class="menu">
+      <a href="#home">Home</a>
+      <a href="#services">Services</a>
+      <a href="#about" class="hide-sm">About</a>
+      <a href="#contact">Contact</a>
+      <a class="btn primary" href="#contact">Book Security Assessment</a>
+    </nav>
+  </div>
+</header>
+
+<main id="home">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="parallax" data-depth="0.08">
+        <div class="hero-badge"><span class="dot"></span> Hackingsum</div>
+        <h1>Stop Cyber Threats Before They Disrupt Your Business.</h1>
+        <p class="lead">Our Managed Security Operations Center (SOC) delivers real-time monitoring, rapid incident response, and continuous protection — so your business stays secure 24×7.</p>
+        <div class="hero-ctas">
+          <a class="btn primary" href="#contact">Book Free Security Assessment</a>
+          <a class="btn ghost" href="#contact">Talk to SOC Expert</a>
+        </div>
+      </div>
+      <div class="dash parallax" data-depth="0.14" aria-label="Animated SOC dashboard preview">
+        <img src="https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=1200&q=80" alt="Live SOC dashboard demo" style="width:100%;height:240px;object-fit:cover;border-radius:12px;border:1px solid var(--border);margin-bottom:10px;" />
+        <div class="bar"></div>
+        <div class="bar" style="width:70%"></div>
+        <div class="row" style="margin-top:10px">
+         
+        </div>
+        
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="container two">
+      <div class="panel"><h2>Cyber Attacks Don’t Wait — Neither Do We.</h2><p class="sub">Most businesses discover attacks too late — after data or operations are already impacted.</p></div>
+      <div class="panel"><h2>Always-On Detection & Response</h2><p class="sub">We continuously monitor, investigate alerts, and guide fast response before damage happens.</p></div>
+    </div>
+  </section>
+
+  <section id="services" class="reveal">
+    <div class="container">
+      <h2>Complete Managed Security Operations</h2>
+      <p class="sub">From monitoring to response, we handle your security operations so you don’t need an in-house SOC.</p>
+      <div class="grid-3">
+        <div class="service"><h3>Managed SOC Monitoring</h3><p>Continuous monitoring with real analysts.</p></div>
+        <div class="service"><h3>Threat Detection & Analysis</h3><p>Alert correlation and investigation.</p></div>
+        <div class="service"><h3>Incident Response Support</h3><p>Containment and remediation guidance.</p></div>
+        <div class="service"><h3>Vulnerability Monitoring</h3><p>Identify risks before attackers do.</p></div>
+        <div class="service"><h3>Compliance Reporting</h3><p>Executive-friendly monthly reports.</p></div>
+        <div class="service"><h3>Security Playbooks</h3><p>Actionable response workflows.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="container">
+      <h2>Why Companies Choose Our SOC</h2>
+      <p class="sub">Enterprise-grade security without enterprise complexity.</p>
+      <div class="checks">
+        <div class="check">✔ Real Security Analysts — not just automation</div>
+        <div class="check">✔ Fast Detection & Response</div>
+        <div class="check">✔ Clear Executive Reports</div>
+        <div class="check">✔ Scalable 8×5 or 24×7 Model</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num" data-target="500">0</div><div class="label">M+ Logs Monitored</div></div>
+        <div class="stat"><div class="num" data-target="99.9">0</div><div class="label">% Detection Coverage</div></div>
+        <div class="stat"><div class="num" data-target="24">0</div><div class="label">×7 Monitoring</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal" id="about">
+    <div class="container two">
+      <div class="dash">
+        <div class="bar" style="width:85%"></div>
+        <div class="bar" style="width:55%"></div>
+        <div class="row" style="margin-top:10px"><div class="card"></div><div class="card"></div></div>
+      </div>
+      <div>
+        <h2>Real-Time Security Visibility</h2>
+        <p class="sub">Centralized SOC dashboard with expert analysis so you always know what matters.</p>
+        <p><a class="btn primary" href="#contact">Request Live Demo</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="container">
+      <h2>How Our SOC Works</h2>
+      <p class="sub">Simple process designed for speed and clarity.</p>
+      <div class="process">
+        <div class="step"><b>1) Collect Logs </b>Agents & integrations feed SIEM.</div>
+        <div class="step"><b>2) Detect Threats </b>Correlation identifies suspicious patterns.</div>
+        <div class="step"><b>3) Investigate Alerts </b>Analysts validate incidents.</div>
+        <div class="step"><b>4) Respond & Report </b>Guidance + executive reporting.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- <section class="reveal">
+    <div class="container">
+      <h2>Client Testimonials</h2>
+      <div class="testi">
+        <div class="quote">“Their SOC team detected suspicious activity early and helped us avoid a major incident.”</div>
+        <div class="quote">“Fast response, clear reports, and a truly professional security partner.”</div>
+      </div>
+    </div>
+  </section> -->
+
+  <section class="reveal">
+    <div class="container">
+      <h2>Flexible SOC Plans</h2>
+      <p class="sub">Start small. Scale anytime.</p>
+      <div class="pricing">
+        <div class="price"><b>Starter SOC</b><p class="small">8×5 Monitoring • Email Alerts • Monthly Report</p></div>
+        <div class="price"><b>Business SOC</b><p class="small">Extended Monitoring • Threat Investigation • Weekly Summary</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="contact">
+    <div class="container">
+      <h2>Your Business Deserves 24×7 Protection.</h2>
+      <p>Talk to our experts and get a free assessment of your current security posture.</p>
+      <form class="lead-form" id="leadForm">
+        <input type="text" name="name" placeholder="Your Name" required />
+        <input type="email" name="email" placeholder="Work Email" required />
+        <input type="text" name="company" placeholder="Company Name" />
+        <input type="tel" name="phone" placeholder="Phone / WhatsApp" />
+        <textarea name="message" placeholder="Tell us about your security needs..."></textarea>
+      </form>
+      <div style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <a class="btn primary" href="mailto:hackingsum.org.in@gmail.com" id="submitLead">Schedule Consultation</a>
+        <a class="btn ghost" href="https://wa.me/917562991655" target="_blank" rel="noopener">WhatsApp SOC Team</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container footer">
+    <div><div class="brand">HACKINGSUM</div><div class="small" style="margin-top:4px;">Threats Never Sleep. Neither Do We.</div><p class="small">Managed SOC • Threat Monitoring • Incident Response • Security Reporting</p></div>
+    <div><b>Quick Links</b><p class="small">Home<br>Services<br>About<br>Contact</p></div>
+    <div><b>Contact</b><p class="small">hackingsum.org.in@gmail.com<br>+91 7562991655<br>Agiaon Bhojpur bihar <br>802201 </p></div>
+  </div>
+</footer>
+
+<div class="floating"><a class="btn primary" href="#contact">Book Assessment</a></div>
+
+<script>
+  // reveal on scroll
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('show'); });
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+  // animated counters
+  function animateCounter(el){
+    const target = parseFloat(el.dataset.target||'0');
+    const isFloat = String(target).includes('.');
+    const duration = 1400;
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min((now-start)/duration,1);
+      const val = target*p;
+      el.textContent = isFloat ? val.toFixed(1) : Math.floor(val);
+      if(p<1) requestAnimationFrame(tick);
+      else el.textContent = isFloat ? target.toFixed(1) : target;
+    }
+    requestAnimationFrame(tick);
+  }
+  const nums = document.querySelectorAll('.num');
+  const numObs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ animateCounter(e.target); numObs.unobserve(e.target);} });
+  },{threshold:0.5});
+  nums.forEach(n=>numObs.observe(n));
+</script>
+<div class="toast" id="toast">Lead details copied into email draft ✔</div>
+<div class="matrix" aria-hidden="true"><canvas id="matrix"></canvas></div>
+
+<script>
+  // parallax hero
+  const parallaxEls = document.querySelectorAll('.parallax');
+  window.addEventListener('mousemove', (e)=>{
+    const x = (e.clientX / window.innerWidth - 0.5);
+    const y = (e.clientY / window.innerHeight - 0.5);
+    parallaxEls.forEach(el=>{
+      const d = parseFloat(el.dataset.depth || '0.08');
+      el.style.transform = `translate(${x*20*d}px, ${y*20*d}px)`;
+    });
+  });
+
+  // matrix rain background
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+  function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+  resize(); addEventListener('resize', resize);
+  const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%';
+  const fontSize = 14;
+  let cols = Math.floor(canvas.width / fontSize);
+  let drops = Array(cols).fill(1);
+  function drawMatrix(){
+    ctx.fillStyle = 'rgba(6,11,22,0.08)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = 'rgba(20,184,166,0.55)';
+    ctx.font = fontSize + 'px monospace';
+    for(let i=0;i<drops.length;i++){
+      const text = chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+      if(drops[i]*fontSize > canvas.height && Math.random()>0.975) drops[i]=0;
+      drops[i]++;
+    }
+  }
+  setInterval(drawMatrix, 45);
+
+  // lead form -> mailto compose helper
+  const submitLead = document.getElementById('submitLead');
+  const leadForm = document.getElementById('leadForm');
+  const toast = document.getElementById('toast');
+  submitLead.addEventListener('click', (e)=>{
+    const data = new FormData(leadForm);
+    const name = data.get('name')||'';
+    const email = data.get('email')||'';
+    const company = data.get('company')||'';
+    const phone = data.get('phone')||'';
+    const message = data.get('message')||'';
+    const subject = encodeURIComponent('SOC Assessment Request - ' + name);
+    const body = encodeURIComponent(`Name: ${name}
+Email: ${email}
+Company: ${company}
+Phone: ${phone}
+
+Requirements:
+${message}`);
+    submitLead.href = `mailto:hackingsum.org.in@gmail.com?subject=${subject}&body=${body}`;
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'),1800);
+  });
+</script>
+</body>
+</html>
